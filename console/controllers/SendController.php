@@ -2,7 +2,6 @@
 
 namespace console\controllers;
 
-use DateTime;
 use common\models\User;
 use yii\console\Controller;
 
@@ -14,66 +13,40 @@ class SendController extends Controller
      * @return string
      */
 
-    public function init() {
+    public function init()
+    {
 
-
-
-        date_default_timezone_set('Europe/Istanbul');
-        //date_default_timezone_set('Asia/Dhaka');
-       // date_default_timezone_set('UTC');
-
-
-        $dateTimeZone = new \DateTimeZone("UTC");
-
-        $date = new DateTime(null, $dateTimeZone);
-
-        //echo $dateTimeZone->getOffset($date)/60/60;
+        date_default_timezone_set('UTC');
 
         $hour = date('H');
-        echo  $hour - 9  ;
+        $diff = $hour - 9;
 
+        if ($diff == 0) {
+            $users = User::find()->where(['timezone_offset' => '0'])->andWhere(['status' => User::STATUS_ACTIVE])->all();
+        } else {
+            if ($diff < 0) {
+                $tzdiff = abs($diff);
+                $tzdiff = str_pad($tzdiff, 2, "0", STR_PAD_LEFT);
+                $tzdiff = '+' . $tzdiff;
 
-        /*
-        $timezone = date('T');
-        echo $timezone;
-        $hour = date('H');
-        echo " - " . $hour;
-        */
-        //if hour = 21;
-        //UTC ye gönder
+            } else {
+                $tzdiff = $diff * -1;
+                $tzdiff = ltrim($tzdiff, '-');
+                $tzdiff = str_pad($tzdiff, 2, "0", STR_PAD_LEFT);
+                $tzdiff = '-' . $tzdiff;
 
-
-        //else
-        //echo 20 + 2 ;
-
-       // echo date('H') . "\n";
-       // exit;
-
-        //eğer saat 8 se +01 lere gönder
-
-        //echo $hour - 21 . "\n";
-
-        for ($i=0; $i != 24; $i++)
-         {
-             //echo $i - 9;
-          }
-
-
-          exit;
-        $users = User::find()
-            ->where(['status' => User::STATUS_ACTIVE])
-            ->all();
+            }
+            $users = User::find()->where(['timezone_offset' => $tzdiff])->andWhere(['status' => User::STATUS_ACTIVE])->all();
+        }
 
         foreach ($users as $user) {
-
-            echo date('Y-m-d H:i:s T', time()) . ' - '.  $user->username . " kullanıcısına havadurumu gönderildi \n";
-
+            echo $user->mail . " - adresine mail gönderildi \n";
         }
 
         exit;
 
-    }
 
+    }
 
 
 }
