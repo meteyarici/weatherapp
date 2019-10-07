@@ -15,7 +15,7 @@ class m191006_113659_seed extends Migration
         for ($i = 1; $i <= 10; $i++) {
 
             $this->insert('gift_code',array(
-                'token'=>md5(microtime()),
+                'token'=>substr(strtoupper(md5(microtime())), 0, 8),
                 'status' =>10,
                 'expires_at' =>time(),
                 'created_at' =>time(),
