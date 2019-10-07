@@ -67,15 +67,25 @@ class UserController extends BaseController
     }
 
     /**
-     * @return string
+     * @return bool
+     * @throws \yii\base\Exception
      */
     public function actionUpdate(){
 
         $yiiRequest = \Yii::$app->request;
         $user = User::findUserByToken($yiiRequest->getHeaders()->get("token"));
 
-        $user->username = Yii::$app->request->post('username');
-        $user->email = Yii::$app->request->post('email');
+        if(Yii::$app->request->post('username')){
+            $user->username = Yii::$app->request->post('username');
+        }
+
+        if(Yii::$app->request->post('password')){
+            $user->setPassword(Yii::$app->request->post('password'));
+        }
+
+        if(Yii::$app->request->post('email')){
+            $user->email = Yii::$app->request->post('email');
+        }
 
         $user->save();
 
@@ -89,9 +99,8 @@ class UserController extends BaseController
             throw new UnauthorizedHttpException("No Gift Code ");
             Yii:$this->init('Hatalı gift codu');
         }
-
-
         $yiiRequest = \Yii::$app->request;
+
         $user = User::findUserByToken($yiiRequest->getHeaders()->get("token"));
         $gift_code = GiftCode::find()->where(['token' => $code])->one();
 
@@ -103,13 +112,9 @@ class UserController extends BaseController
             if($user->save()){
                 return ['status' =>true, 'message' => 'User Activated'];
             }
-
-
         }
         else {
-
             throw new UnauthorizedHttpException("Gift Code Invalid ");
-
         }
         }
         else

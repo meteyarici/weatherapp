@@ -16,6 +16,8 @@ class SendController extends Controller
 
     public function init() {
 
+
+
         date_default_timezone_set('Europe/Istanbul');
         //date_default_timezone_set('Asia/Dhaka');
        // date_default_timezone_set('UTC');
