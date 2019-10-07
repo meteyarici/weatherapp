@@ -247,9 +247,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function findUserByToken($token){
 
          $token =  Token::find()->where(["token" => $token])->one();
-
-
-         return static::findIdentity($token->user_id);
+         return User::find()->where(["id" => $token->user_id])->one();
 
     }
 
@@ -257,7 +255,7 @@ class User extends ActiveRecord implements IdentityInterface
      * @param $token
      * @return bool
      */
-    public function isActive($token){
+    public static function isActive($token){
 
         $user =  Token::find()->where(["token" => $token])->one();
 
